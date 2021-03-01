@@ -12,6 +12,6 @@
         <title>Cadastro de Produtos</title>
     </head>
     <body>
-        
+        <h1>teste</h1>
     </body>
 </html>
