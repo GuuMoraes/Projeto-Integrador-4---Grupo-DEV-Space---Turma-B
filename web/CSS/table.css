@@ -1,0 +1,22 @@
+/* 
+    Created on : 2 de mar de 2021, 21:39:47
+    Author     : Gustavo
+*/
+
+.table{
+    width: 1000px;
+    border: 1px solid #ccc;
+    margin-left: auto;
+    margin-right: auto; 
+    box-shadow: 3px 3px 2px #ccc;
+    transition: 0.5s;
+
+}
+
+#add:hover{
+    color: #fff;
+}
+
+
+
+
