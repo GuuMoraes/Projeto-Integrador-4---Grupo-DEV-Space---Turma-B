@@ -9,8 +9,7 @@ function closeNav() {
     document.body.style.backgroundColor = "rgba(0,0,0,0)";
 }
 
-x=10;
-for (i = 0; i< 10; i++){
-    x++;
-}
+$("#btn-mensagem").click(function(){
+    $("#modal-mensagem").modal();
+});
 

@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="br.senac.sp.bd.ConexaoDB"%>
 <%@page import="java.sql.*"%>
+<%@page import="javax.servlet.http.*"%>
 <%@page import="com.mysql.jdbc.Driver"%>
 <!DOCTYPE html>
 <html>
@@ -14,12 +15,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link href="CSS/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link href="CSS/navBar.css" rel="stylesheet">
         <link href="CSS/table.css" rel="stylesheet">
-        <script type="text/javascript" src="js/meu-arquivo.js"></script>
+        <link href="CSS/Cadastro.css" rel="stylesheet">  
         <title>Lista de Cursos</title>
     </head>
     <body>
@@ -63,21 +66,22 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        <a class="nav-link active" aria-current="page" href="#">Cursos</a>
+                        <a class="nav-link active" aria-current="page" href="Listar%20Cursos.jsp">Cursos</a>
                         <a class="nav-link" href="#"></a>
                         <a class="nav-link" href="#"></a>        
                     </div>
                 </div>
             </div>
         </nav>
-        <div id="pesquisa" class="container-fluid" style="position: absolute; width: 400px; margin-left: 158px; margin-bottom: -55px">
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <a type="button" class="btn btn-outline-success" id="add" >Search</a>
+        <div id="pesquisa" class="container-fluid" style="position: absolute; width: 400px; margin-left: 160px; margin-bottom: -55px">
+            <form class="d-flex" method="post">
+                <input class="form-control me-2" type="search" placeholder="Buscar por Nome do Curso" aria-label="Search" name="txtBuscar">
+                <button type="submit" class="btn btn-outline-success" name="btnBuscar" id="add" >Buscar</button>
             </form>
         </div>
-        <table class="table"   style="position: relative; margin-left: auto; margin-right: auto;margin-top: 70px; text-align: center" >
-            <a href="Cadastrar%20Cursos.jsp" type="button" class="btn btn-outline-success" id="add"  style="position: absolute; margin-left: 997px" ><b>+</b> Adicionar Novo Curso</a>
+
+        <table class="table"   style="position: relative; margin-left: auto; margin-right: auto;margin-top: 70px; text-align: center" method="post">
+            <a href="Listar Cursos.jsp?funcao=novo" type="button" class="btn btn-outline-success" id="add"  style="position: absolute; margin-left: 997px" ><b>+</b> Adicionar Novo Curso</a>
             <thead>
                 <tr>
                     <th scope="col" class="text-center">#ID</th>
@@ -93,7 +97,12 @@
                 <%
                     try {
                         st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                        rs = st.executeQuery("SELECT * FROM curso");
+                        if (request.getParameter("btnBuscar") != null) {
+                            String busca = '%' + request.getParameter("txtBuscar") + '%';
+                            rs = st.executeQuery("SELECT * FROM curso where nome LIKE '" + busca + "'");
+                        } else {
+                            rs = st.executeQuery("SELECT * FROM curso");
+                        }
 
                         while (rs.next()) {%>
                 <tr>
@@ -102,7 +111,7 @@
                     <td><%= rs.getInt(6)%></td>
                     <td><%= rs.getString(5)%></td>
                     <td></td>
-                    <td class="text-center"><a class='btn btn-info btn-xs' href="#"><span class="glyphicon glyphicon-edit"></span> Editar</a> <a href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Deletar</a> <a href="#" id="bntVer" class="btn btn-success btn-xs" style="background-color: #198754"><span class="glyphicon glyphicon-eye-open" ></span> Ver</a> <a class='btn btn-light btn-xs' href="#"><span class="glyphicon glyphicon-retweet"></span> On/Off</a> </td>
+                    <td class="text-center"><a class='btn btn-info btn-xs' href="#"><span class="glyphicon glyphicon-edit"></span> Editar</a> <a href="Listar%20Cursos.jsp?funcao=excluir&id=<%= rs.getString(1)%>"  class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Deletar</a> <a href="#" id="bntVer" class="btn btn-success btn-xs" style="background-color: #198754"><span class="glyphicon glyphicon-eye-open" ></span> Ver</a> <a onclick="funcao1()"class='btn btn-light btn-xs'onclick="funcao1()" href="#"><span class="glyphicon glyphicon-retweet"></span> On/Off</a> </td>
                 </tr>
                 <% }
 
@@ -137,7 +146,219 @@
                 </svg>
             </button>
         </div>
-
-
     </body>
 </html>
+
+<!-- Modal -->
+<div class="modal" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content">
+            <div class="modal-body">
+                <div style="display: flex; flex-direction: row; justify-content: center; align-items: center">
+                    <form class="form-horizontal" style="width: 1000px;" method="post">
+                        <fieldset>
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">Cadastro de Cursos</div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <div class="col-md-11 control-label">
+                                            <p class="help-block"><h11>*</h11> Campo Obrigatório </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="Nome">Nome do Curso <h11>*</h11></label>  
+                                        <div class="col-md-8">
+                                            <input id="Nome" name="txtNome" placeholder="Nome do Curso" class="form-control input-md" required="" type="text" minlength="3" maxlength="280">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="Descricao">Descrição <h11>*</h11></label>  
+                                        <div class="col-md-8">
+                                            <textarea required="" name="txtdescricao" placeholder="Descrição do Curso" class="form-control input-md" required="" type="text" id="exampleFormControlTextarea1" rows="3" minlength="0" maxlength="2000"></textarea>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="Estrelas">Estrelas<h11>*</h11></label>
+                                        <div class="col-md-2">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-half" viewBox="0 0 16 16">
+                                                    <path d="M5.354 5.119L7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.55.55 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.519.519 0 0 1-.146.05c-.341.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.171-.403.59.59 0 0 1 .084-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027c.08 0 .16.018.232.056l3.686 1.894-.694-3.957a.564.564 0 0 1 .163-.505l2.906-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.002 2.223 8 2.226v9.8z"/>
+                                                    </svg></span>
+                                                <input id="estrelas" name="txtestrelas" class="form-control" placeholder="" required="" type="number" min="0" max="5">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="Status">Status <h11>*</h11></label>
+                                        <div class="col-md-2">
+                                            <select required class="form-select form-select-lg mb-3" aria-label="Selecione" name="txtstatus">
+                                                <option value="Ativo" >Ativo</option>
+                                                <option value="Inativo" >Inativo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="QntVagas">Quant. de Vagas <h11>*</h11></label>
+                                        <div class="col-md-2">
+                                            <input id="QntVagas" name="txtQntVagas" placeholder="Qnt de Vagas" class="form-control input-md" required="" type="number" min="1">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="Preço">Preço <h11>*</h11></label>
+                                        <div class="col-md-2">
+                                            <input id="Preço" name="txtpreco" placeholder="Ex.: 000.00" class="form-control input-md" required="" type="text" pattern="^\d+(\.)\d{2}$">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="Cadastrar"></label>
+                                        <div class="col-md-10">
+                                            <button id="Cadastrar" name="Cadastrar" class="btn btn-success" type="Submit" style="background-color: #198754; border-color: #198754;">Cadastrar - seguir Imagens</button>
+                                            <a id="Cancelar" name="Cancelar" class="btn btn-danger" href="Listar%20Cursos.jsp">Cancelar</a>
+                                        </div>
+                                    </div>
+                                </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="ModalImagens" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content">
+            <div class="modal-body">
+                <div style="display: flex; flex-direction: row; justify-content: center; align-items: center">
+                    <form class="form-horizontal" style="width: 1000px;" method="post">
+                        <fieldset>
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">Cadastro de Imagens</div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <div class="col-md-11 control-label">
+                                            <p class="help-block"><h11>*</h11> Campo Obrigatório </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-11 xl">
+                                        <label class="col-md-2 control-label" for="img">Adicionar Imagem<h11>*</h11></label>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <input type="file" class="form-control" id="inputGroupFile02">
+                                                <button class="btn btn-secondary" type="button" id="inputGroupFileAddon04" type="Submit" style="position: absolute">Upload</button>
+
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" >
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                    Imagem da Página Principal
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <%  String idCurso = null;
+
+                                        try {
+                                            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                                            rs = st.executeQuery("SELECT * FROM curso order by codCurso desc limit 1");
+                                            while (rs.next()) {
+                                                idCurso = rs.getString(1);
+                                            }
+
+                                        } catch (Exception e) {
+                                        }
+
+                                    %>
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="Cadastrar"></label>
+                                        <div class="col-md-10">
+                                            <button id="Cadastrar" name="CadastrarImagens" class="btn btn-success" type="Submit" style="background-color: #198754; border-color: #198754;">Cadastrar</button>
+                                            <a id="Cancelar" name="Cancelar" class="btn btn-danger" href="Listar%20Cursos.jsp?funcao=excluir&id=<%=idCurso%>">Cancelar</a>
+                                        </div>
+                                    </div>
+                                </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("novo")) {
+        out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
+    }
+
+%>
+<%    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("imagens")) {
+        out.print("<script>$('#ModalImagens').modal({backdrop: 'static', keyboard: false});</script>");
+    }
+
+%>
+
+<%    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("excluir")) {
+        String id = request.getParameter("id");
+
+        try {
+            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE from curso where codCurso = '" + id + "'");
+%>
+<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp'"/>
+<%
+        } catch (Exception e) {
+            out.print(e);
+        }
+    }
+
+%>
+
+<%      if (request.getParameter("Cadastrar") != null) {
+
+        String nome = request.getParameter("txtNome");
+        String descricao = request.getParameter("txtdescricao");
+        String estrelas = request.getParameter("txtestrelas");
+        String status = request.getParameter("txtstatus");
+        String vagas = request.getParameter("txtQntVagas");
+        double preco = Double.parseDouble(request.getParameter("txtpreco"));
+
+        try {
+
+            st.executeUpdate("insert into curso (nome, descricao, qtdEstrelas, estado, qtdVagas, valor) "
+                    + "VALUES('" + nome + "', '" + descricao + "', '" + estrelas + "', '" + status + "', '" + vagas + "', '" + preco + "')");
+            out.print("<script>$('#Modal').modal('hide');</script>");
+%>
+<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=imagens'"/>
+<%
+        } catch (Exception e) {
+            out.print(e);
+        }
+
+    }
+
+%>
+
+<%  if (request.getParameter("CadastrarImagens") != null) {
+        String nome = "nome";
+        idCurso = null;
+
+        try {
+            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery("SELECT * FROM curso order by codCurso desc limit 1");
+            while (rs.next()) {
+                idCurso = rs.getString(1);
+            }
+            st.executeUpdate("insert into imagens (caminho, curso_codCurso) "
+                    + "VALUES('" + nome + "', '" + idCurso + "')");
+%>
+<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp'"/>
+<%
+        } catch (Exception e) {
+        }
+    }
+%>

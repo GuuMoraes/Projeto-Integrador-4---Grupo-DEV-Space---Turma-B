@@ -13,14 +13,16 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="JS/navBar.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link href="CSS/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link href="CSS/navBar.css" rel="stylesheet">
-        <script type="text/javascript" src="js/meu-arquivo.js"></script>
+
         <title>DEV Space</title>
     </head>
     <%
@@ -32,7 +34,7 @@
             <div class="container">
                 <div class="row row2" id="nav">
                     <div class="col-sm-2">
-                        <h2 style="margin:0px;" ><span class="smallnav menu">☰ DEV Space</span></h2>
+                        <h2 style="margin:0px;" ><span class="smallnav menu">☰</span></h2>
                         <h1 style="margin:0px;"><span class="largenav"></span></h1>
                         <div id="logo" style="padding-left: 70Px" >
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="147" height="68.399" viewBox="0 0 147 68.399">
@@ -63,7 +65,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="cart largenav col-sm-2" style="padding-top: 11px; padding-left: 100px">
+                    <div class="cart largenav col-sm-2" style="padding-top: 11px; padding-left: 100px; ">
                         <a class="cart-button" >
                             <svg class="cart-svg " width="16 " height="16 " viewBox="0 0 16 16 ">
                             <path d="M15.32 2.405H4.887C3 2.405 2.46.805 2.46.805L2.257.21C2.208.085 2.083 0 1.946 0H.336C.1 0-.064.24.024.46l.644 1.945L3.11 9.767c.047.137.175.23.32.23h8.418l-.493 1.958H3.768l.002.003c-.017 0-.033-.003-.05-.003-1.06 0-1.92.86-1.92 1.92s.86 1.92 1.92 1.92c.99 0 1.805-.75 1.91-1.712l5.55.076c.12.922.91 1.636 1.867 1.636 1.04 0 1.885-.844 1.885-1.885 0-.866-.584-1.593-1.38-1.814l2.423-8.832c.12-.433-.206-.86-.655-.86 " fill="#000"></path>
@@ -73,26 +75,23 @@
                     </div>
                 </div>
             </div>
-        </div>
-
+        </div> 
         <%
-            int codigo;
-            String nome;
-            Connection conexao;
-            PreparedStatement instrucaoSQL;
+            if (request.getParameter("cadastrar") != null) {
+                String nome = request.getParameter("txtNome");
 
-            try {
-                st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                rs = st.executeQuery("SELECT * FROM curso");
+                try {
+                    st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    st.executeUpdate("insert into curso2 (nome) VALUES('" + nome + "')");
 
-                while (rs.next()) {
-                    nome = rs.getString(3);
-                    out.println(nome);
-                    rs.last();
+                } catch (Exception e) {
+                    out.print(e);
                 }
-            } catch (Exception e) {
-                out.print(e);
+                response.sendRedirect("Listar%20Cursos.jsp");
+            } else {
+
             }
+
         %>
     </body>
 </html>
