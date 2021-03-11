@@ -1,20 +1,20 @@
 <%-- 
-    Document   : index
-    Created on : 28 de fev de 2021, 18:19:43
+    Document   : Visualizar Curso
+    Created on : 09/03/2021, 22:10:11
     Author     : Gustavo Moraes
 --%>
 
 
-
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="br.senac.sp.bd.ConexaoDB"%>
 <%@page import="java.sql.*"%>
 <%@page import="com.mysql.jdbc.Driver"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="JS/navBar.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="JS/navBar.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
         <link href="CSS/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -22,10 +22,15 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link href="CSS/navBar.css" rel="stylesheet">
-
-        <title>DEV Space</title>
+        <link href="CSS/Visualizar.css" rel="stylesheet" >
+        <script src="JS/Visualizar.js"></script>
+        <title>JSP Page</title>
     </head>
     <body>
+        <%
+            Statement st = null;
+            ResultSet rs = null;
+        %> 
         <div id="flipkart-navbar">
             <div class="container">
                 <div class="row row2" id="nav">
@@ -72,6 +77,139 @@
                 </div>
             </div>
         </div> 
-   
+        <%
+            String Enome = "";
+            String Edescricao = "";
+            int Eestrelas = 0;
+            String Estatus = "";
+            String Evagas = "";
+            String Epreco = "";
+            String id = request.getParameter("id");
+            String imagem = "";
+            try {
+                st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                rs = st.executeQuery("SELECT * FROM curso where codCurso = '" + id + "'");
+
+                while (rs.next()) {
+                    Enome = rs.getString(2);
+                    Edescricao = rs.getString(3);
+                    Eestrelas = rs.getInt(4);
+                    Estatus = rs.getString(5);
+                    Evagas = rs.getString(6);
+                    Epreco = rs.getString(7);
+
+                }
+                rs = st.executeQuery("SELECT * FROM imagens where curso_codCurso = '" + id + "'");
+                while (rs.next()) {
+                    imagem = rs.getString(3);
+                }
+
+            } catch (Exception e) {
+                out.print(e);
+            }
+
+        %>
+        <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"><div class="pd-wrap">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div id="slider" class="owl-carousel product-slider">
+                            <div class="item">
+                                <img src="‪../build/web/Imagens/<%=imagem%>" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                        </div>
+                        <div id="thumb" class="owl-carousel product-thumb">
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                            <div class="item">
+                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="product-dtl">
+                            <div class="product-info">
+                                <div class="product-name"><%=Enome%></div>
+                                <div class="reviews-counter">
+                                    <div class="rate">
+                                        <%
+                                            for (int i = 0; i < Eestrelas; i++) {%>
+                                        <input disabled="" id="star<%=Eestrelas%>"  value="<%=Eestrelas%>"/>
+                                        <label for="star<%=Eestrelas%>" title="text" style="color: #ffc700"><%=Eestrelas%> stars</label>
+
+                                        <%}
+
+                                        %> 
+
+                                    </div>
+                                    <span><%= Eestrelas%> Estrelas</span>
+                                </div>
+                                <div class="product-price-discount"><span>R$ <%=Epreco%></span></div>
+                            </div>
+                            <p><%=Edescricao%></p>
+                            <div class="product-count">
+                                <a href="#" class="round-black-btn">Comprar</a>
+                                <a href="Listar Cursos.jsp" class="round-black-btn">Voltar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-info-tabs">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Descrição</a>
+                        </li>
+                    </ul>
+                    <p><%=Edescricao%></p>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="	sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     </body>
 </html>

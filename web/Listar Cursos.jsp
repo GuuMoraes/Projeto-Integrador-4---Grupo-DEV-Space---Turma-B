@@ -4,10 +4,11 @@
     Author     : Gustavo Moraes
 --%>
 
+
+<%@page import="br.senac.sp.utils.Upload"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="br.senac.sp.bd.ConexaoDB"%>
 <%@page import="java.sql.*"%>
-<%@page import="javax.servlet.http.*"%>
 <%@page import="com.mysql.jdbc.Driver"%>
 <!DOCTYPE html>
 <html>
@@ -23,6 +24,7 @@
         <link href="CSS/navBar.css" rel="stylesheet">
         <link href="CSS/table.css" rel="stylesheet">
         <link href="CSS/Cadastro.css" rel="stylesheet">  
+
         <title>Lista de Cursos</title>
     </head>
     <body>
@@ -111,7 +113,12 @@
                     <td><%= rs.getInt(6)%></td>
                     <td><%= rs.getString(5)%></td>
                     <td></td>
-                    <td class="text-center"><a class='btn btn-info btn-xs' href="#"><span class="glyphicon glyphicon-edit"></span> Editar</a> <a href="Listar%20Cursos.jsp?funcao=excluir&id=<%= rs.getString(1)%>"  class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Deletar</a> <a href="#" id="bntVer" class="btn btn-success btn-xs" style="background-color: #198754"><span class="glyphicon glyphicon-eye-open" ></span> Ver</a> <a onclick="funcao1()"class='btn btn-light btn-xs'onclick="funcao1()" href="#"><span class="glyphicon glyphicon-retweet"></span> On/Off</a> </td>
+                    <td class="text-center">
+                        <a href="Listar%20Cursos.jsp?funcao=editar&id=<%= rs.getString(1)%>" class='btn btn-info btn-xs'><span class="glyphicon glyphicon-edit"></span> Editar</a> 
+                        <a href="Listar%20Cursos.jsp?funcao=excluir&id=<%= rs.getString(1)%>"  class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Deletar</a>
+                        <a href="Visualizar Curso.jsp?id=<%= rs.getString(1)%>" id="bntVer" class="btn btn-success btn-xs" style="background-color: #198754"><span class="glyphicon glyphicon-eye-open" ></span> Ver</a> 
+                        <a href="Listar%20Cursos.jsp?funcao=on-off&id=<%= rs.getString(1)%>" class='btn btn-light btn-xs'><span class="glyphicon glyphicon-retweet"></span> On/Off</a> 
+                    </td>
                 </tr>
                 <% }
 
@@ -157,8 +164,61 @@
                 <div style="display: flex; flex-direction: row; justify-content: center; align-items: center">
                     <form class="form-horizontal" style="width: 1000px;" method="post">
                         <fieldset>
+                            <%  String titulo = "";
+                                String titulo2 = "";
+                                String btn = "";
+                                String Eid = "";
+                                String Enome = "";
+                                String Edescricao = "";
+                                String Eestrelas = "";
+                                String Estatus = "";
+                                String Evagas = "";
+                                String Epreco = "";
+                                String off = "";
+                                if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editar") || request.getParameter("funcao") != null && request.getParameter("funcao").equals("on-off")) {
+                                    titulo = "Editar";
+                                    titulo2 = "Editar Curso - seguir Imagens";
+                                    btn = "Editar";
+                                    Eid = request.getParameter("id");
+
+                                    try {
+                                        st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                                        rs = st.executeQuery("SELECT * FROM curso where codCurso = '" + Eid + "' ");
+                                        while (rs.next()) {
+                                            Enome = rs.getString(2);
+                                            Edescricao = rs.getString(3);
+                                            Eestrelas = rs.getString(4);
+                                            Estatus = rs.getString(5);
+                                            Evagas = rs.getString(6);
+                                            Epreco = rs.getString(7);
+                                        }
+                                    } catch (Exception e) {
+                                        out.print(e);
+                                    }
+                                    if (request.getParameter("funcao").equals("on-off")) {
+                                        if (Estatus.equals("Ativo")) {
+                                            titulo = "Inativar";
+                                            titulo2 = "Inativar Curso";
+                                        } else {
+                                            titulo = "Ativar";
+                                            titulo2 = "Ativar Curso";
+                                        }
+
+                                        off = "disabled=\" \"";
+                                        btn = "Ativar/Inativar";
+                                    }
+
+                                } else {
+                                    titulo = "Cadastrar";
+                                    titulo2 = "Cadastrar Curso - seguir Imagens";
+                                    btn = "Cadastrar";
+
+                                }
+
+
+                            %>
                             <div class="panel panel-primary">
-                                <div class="panel-heading">Cadastro de Cursos</div>
+                                <div class="panel-heading"><%=titulo%> Curso</div>
                                 <div class="panel-body">
                                     <div class="form-group">
                                         <div class="col-md-11 control-label">
@@ -168,14 +228,14 @@
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Nome">Nome do Curso <h11>*</h11></label>  
                                         <div class="col-md-8">
-                                            <input id="Nome" name="txtNome" placeholder="Nome do Curso" class="form-control input-md" required="" type="text" minlength="3" maxlength="280">
+                                            <input <%=off%> value="<%=Enome%>" id="Nome" name="txtNome" placeholder="Nome do Curso" class="form-control input-md" required="" type="text" minlength="3" maxlength="280">
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Descricao">Descrição <h11>*</h11></label>  
                                         <div class="col-md-8">
-                                            <textarea required="" name="txtdescricao" placeholder="Descrição do Curso" class="form-control input-md" required="" type="text" id="exampleFormControlTextarea1" rows="3" minlength="0" maxlength="2000"></textarea>
+                                            <textarea <%=off%> name="txtdescricao" placeholder="Descrição do Curso" class="form-control input-md" required="" type="text" id="comment" rows="3" minlength="0" maxlength="2000"><%=Edescricao%></textarea>
                                         </div>
                                     </div>
 
@@ -187,7 +247,7 @@
                                                 <span class="input-group-addon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-half" viewBox="0 0 16 16">
                                                     <path d="M5.354 5.119L7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.55.55 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.519.519 0 0 1-.146.05c-.341.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.171-.403.59.59 0 0 1 .084-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027c.08 0 .16.018.232.056l3.686 1.894-.694-3.957a.564.564 0 0 1 .163-.505l2.906-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.002 2.223 8 2.226v9.8z"/>
                                                     </svg></span>
-                                                <input id="estrelas" name="txtestrelas" class="form-control" placeholder="" required="" type="number" min="0" max="5">
+                                                <input <%=off%> value="<%=Eestrelas%>" id="estrelas" name="txtestrelas" class="form-control" placeholder="" required="" type="number" min="0" max="5">
                                             </div>
                                         </div>
                                     </div>
@@ -195,9 +255,23 @@
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Status">Status <h11>*</h11></label>
                                         <div class="col-md-2">
-                                            <select required class="form-select form-select-lg mb-3" aria-label="Selecione" name="txtstatus">
-                                                <option value="Ativo" >Ativo</option>
-                                                <option value="Inativo" >Inativo</option>
+                                            <select  required="" class="form-select form-select-lg mb-3" aria-label="Selecione" name="txtstatus">
+                                                <option  value="<%=Estatus%>"><%=Estatus%></option>
+                                                <%
+
+                                                    if (!Estatus.equals(
+                                                            "Ativo")) {
+                                                        out.print(" <option>Ativo</option>");
+                                                    }
+
+                                                    if (!Estatus.equals(
+                                                            "Inativo")) {
+                                                        out.print(" <option>Inativo</option>");
+                                                    }
+
+
+                                                %>
+
                                             </select>
                                         </div>
                                     </div>
@@ -205,21 +279,21 @@
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="QntVagas">Quant. de Vagas <h11>*</h11></label>
                                         <div class="col-md-2">
-                                            <input id="QntVagas" name="txtQntVagas" placeholder="Qnt de Vagas" class="form-control input-md" required="" type="number" min="1">
+                                            <input <%=off%> value="<%=Evagas%>" id="QntVagas" name="txtQntVagas" placeholder="Qnt de Vagas" class="form-control input-md" required="" type="number" min="1">
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Preço">Preço <h11>*</h11></label>
                                         <div class="col-md-2">
-                                            <input id="Preço" name="txtpreco" placeholder="Ex.: 000.00" class="form-control input-md" required="" type="text" pattern="^\d+(\.)\d{2}$">
+                                            <input <%=off%> value="<%=Epreco%>" id="Preço" name="txtpreco" placeholder="Ex.: 000.00" class="form-control input-md" required="" type="text" pattern="^\d+(\.)\d{2}$">
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Cadastrar"></label>
                                         <div class="col-md-10">
-                                            <button id="Cadastrar" name="Cadastrar" class="btn btn-success" type="Submit" style="background-color: #198754; border-color: #198754;">Cadastrar - seguir Imagens</button>
+                                            <button id="Cadastrar" name="<%=btn%>" class="btn btn-success" type="Submit" style="background-color: #198754; border-color: #198754;"><%=titulo2%> </button>
                                             <a id="Cancelar" name="Cancelar" class="btn btn-danger" href="Listar%20Cursos.jsp">Cancelar</a>
                                         </div>
                                     </div>
@@ -236,7 +310,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 <div style="display: flex; flex-direction: row; justify-content: center; align-items: center">
-                    <form class="form-horizontal" style="width: 1000px;" method="post">
+                    <form id="formImagem" class="form-horizontal" style="width: 1000px;" enctype="multipart/form-data" method="post">
                         <fieldset>
                             <div class="panel panel-primary">
                                 <div class="panel-heading">Cadastro de Imagens</div>
@@ -250,23 +324,26 @@
                                         <label class="col-md-2 control-label" for="img">Adicionar Imagem<h11>*</h11></label>
                                         <div class="col-md-6">
                                             <div class="input-group">
-                                                <input type="file" class="form-control" id="inputGroupFile02">
-                                                <button class="btn btn-secondary" type="button" id="inputGroupFileAddon04" type="Submit" style="position: absolute">Upload</button>
+                                                <input required="" type="file" class="form-control" id="inputGroupFile02" id="imagem" name="imagem[]" onchange="uploadImagem();">
+                                                <button class="btn btn-secondary" name="upload" id="inputGroupFileAddon04" type="submit"  style="position: absolute">Upload</button>
 
                                             </div>
+
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" >
                                                 <label class="form-check-label" for="flexCheckDefault">
                                                     Imagem da Página Principal
                                                 </label>
                                             </div>
+                                            <img id="target" width="150" height="150">
                                         </div>
-                                    </div>
+                                    </div>  
                                     <%  String idCurso = null;
 
                                         try {
                                             st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                                             rs = st.executeQuery("SELECT * FROM curso order by codCurso desc limit 1");
+
                                             while (rs.next()) {
                                                 idCurso = rs.getString(1);
                                             }
@@ -278,7 +355,7 @@
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Cadastrar"></label>
                                         <div class="col-md-10">
-                                            <button id="Cadastrar" name="CadastrarImagens" class="btn btn-success" type="Submit" style="background-color: #198754; border-color: #198754;">Cadastrar</button>
+                                            <a href="Listar%20Cursos.jsp" id="Cadastrar" name="CadastrarImagens" class="btn btn-success" type="button" style="background-color: #198754; border-color: #198754;">Cadastrar</a>
                                             <a id="Cancelar" name="Cancelar" class="btn btn-danger" href="Listar%20Cursos.jsp?funcao=excluir&id=<%=idCurso%>">Cancelar</a>
                                         </div>
                                     </div>
@@ -291,34 +368,51 @@
     </div>
 </div>
 
-<%    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("novo")) {
+<%    if (request.getParameter(
+            "funcao") != null && request.getParameter("funcao").equals("novo")) {
         out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
     }
 
 %>
-<%    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("imagens")) {
+<%    if (request.getParameter(
+            "funcao") != null && request.getParameter("funcao").equals("imagens")) {
         out.print("<script>$('#ModalImagens').modal({backdrop: 'static', keyboard: false});</script>");
     }
 
 %>
+<%    if (request.getParameter(
+            "funcao") != null && request.getParameter("funcao").equals("editar")) {
+        out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
+    }
 
-<%    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("excluir")) {
+%>
+<%    if (request.getParameter(
+            "funcao") != null && request.getParameter("funcao").equals("on-off")) {
+        out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
+    }
+
+%>
+
+<%    if (request.getParameter(
+            "funcao") != null && request.getParameter("funcao").equals("excluir")) {
         String id = request.getParameter("id");
 
         try {
             st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE from imagens where curso_codCurso = '" + id + "'");
             st.executeUpdate("DELETE from curso where codCurso = '" + id + "'");
+
 %>
 <meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp'"/>
-<%
-        } catch (Exception e) {
+<%        } catch (Exception e) {
             out.print(e);
         }
     }
 
 %>
 
-<%      if (request.getParameter("Cadastrar") != null) {
+<%      if (request.getParameter(
+            "Cadastrar") != null) {
 
         String nome = request.getParameter("txtNome");
         String descricao = request.getParameter("txtdescricao");
@@ -343,7 +437,8 @@
 
 %>
 
-<%  if (request.getParameter("CadastrarImagens") != null) {
+<%  if (request.getParameter(
+            "CadastrarImagens") != null) {
         String nome = "nome";
         idCurso = null;
 
@@ -362,3 +457,124 @@
         }
     }
 %>
+
+<%      if (request.getParameter(
+            "Editar") != null) {
+
+        String nome = request.getParameter("txtNome");
+        String descricao = request.getParameter("txtdescricao");
+        String estrelas = request.getParameter("txtestrelas");
+        String status = request.getParameter("txtstatus");
+        String vagas = request.getParameter("txtQntVagas");
+        double preco = Double.parseDouble(request.getParameter("txtpreco"));
+        String id = request.getParameter("id");
+
+        try {
+
+            st.executeUpdate("UPDATE curso SET nome = '" + nome + "', descricao = '" + descricao + "', qtdEstrelas = '" + estrelas + "', estado = '" + status + "', qtdVagas = '" + vagas + "', valor = '" + preco + "' where codCurso = '" + id + "'");
+            out.print("<script>$('#Modal').modal('hide');</script>");
+%>
+<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=imagens2'"/>
+<%
+        } catch (Exception e) {
+            out.print(e);
+        }
+
+    }
+
+%>
+
+<%      if (request.getParameter(
+            "Ativar/Inativar") != null) {
+
+        String status = request.getParameter("txtstatus");
+        String id = request.getParameter("id");
+
+        try {
+
+            st.executeUpdate("UPDATE curso SET estado = '" + status + "' where codCurso = '" + id + "'");
+            out.print("<script>$('#Modal').modal('hide');</script>");
+%>
+<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=imagens2'"/>
+<%
+        } catch (Exception e) {
+            out.print(e);
+        }
+
+    }
+
+%>
+
+<script src="JS/jquery-3.6.0.js"></script>
+
+<script type="text/javascript">
+
+    function uploadImagem() {
+
+        var target = document.getElementById('target');
+        var file = document.querySelector("input[type=file]").files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+            target.src = reader.result;
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+            $.ajax({
+                url: "Ajax/Upload.jsp",
+                method: "post",
+                data: {uploadImagem: target.src},
+            }).done(function (response) {
+
+            }).fail(function (xhr) {
+
+            });
+        } else {
+
+        }
+    }
+
+</script>
+
+<script type="text/javascript">
+    $("#formImagem").submit(function () {
+
+        event.preventDefault();
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: "Ajax/Upload.jsp",
+            type: 'POST',
+            data: formData,
+
+            success: function (mensagem) {
+
+                $('#mensagem').removeClass()
+
+                if (mensagem.trim() == "Salvo com Sucesso!!") {
+                    $('#mensagem').addClass('text-success');
+                } else {
+
+                    $('#mensagem').addClass('text-danger')
+                }
+
+                $('#mensagem').text(mensagem)
+
+            },
+
+            cache: false,
+            contentType: false,
+            processData: false,
+            xhr: function () {  // Custom XMLHttpRequest
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.Upload) { // Avalia se tem suporte a propriedade upload
+                    myXhr.Upload.addEventListener('progress', function () {
+                        /* faz alguma coisa durante o progresso do upload */
+                    }, false);
+                }
+                return myXhr;
+            }
+        });
+    });
+</script>
