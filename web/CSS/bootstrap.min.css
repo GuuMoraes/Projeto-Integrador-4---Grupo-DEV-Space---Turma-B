@@ -6678,7 +6678,6 @@ button.close {
 
 .tooltip {
     position: absolute;
-    z-index: 1070
+    z-index: 1070;
 }
 
-;
