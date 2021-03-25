@@ -24,7 +24,7 @@
         <link href="CSS/navBar.css" rel="stylesheet">
         <link href="CSS/Visualizar.css" rel="stylesheet" >
         <script src="JS/Visualizar.js"></script>
-        <title>JSP Page</title>
+        <title>Visualizar</title>
     </head>
     <body>
         <%
@@ -99,15 +99,10 @@
                     Epreco = rs.getString(7);
 
                 }
-                rs = st.executeQuery("SELECT * FROM imagens where curso_codCurso = '" + id + "'");
-                while (rs.next()) {
-                    imagem = rs.getString(3);
-                }
 
             } catch (Exception e) {
                 out.print(e);
             }
-
         %>
         <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800&display=swap" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
@@ -116,51 +111,23 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-5">
-                        <div id="slider" class="owl-carousel product-slider">
-                            <div class="item">
-                                <img src="‪../build/web/Imagens/<%=imagem%>" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
+                        <div id="slider" class="owl-carousel product-slider" >    
+                            <%
+                                rs = st.executeQuery("SELECT * FROM imagens where curso_codCurso = '" + id + "'");
+                                while (rs.next()) {%>
+                            <div class="item" style="width: 445px; height: 333px">
+                                <img src="Imagens/<%= rs.getString(3)%>" >
+                            </div><%}
+                            %>
                         </div>
                         <div id="thumb" class="owl-carousel product-thumb">
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
-                            <div class="item">
-                                <img src="https://i.ytimg.com/vi/PJ_zomNMK_s/maxresdefault.jpg" />
-                            </div>
+                            <%
+                                rs = st.executeQuery("SELECT * FROM imagens where curso_codCurso = '" + id + "'");
+                                while (rs.next()) {%>
+                            <div class="item" style="width: 111px; height: 100px">
+                                <img src="Imagens/<%= rs.getString(3)%>" >
+                            </div><%}
+                            %>
                         </div>
                     </div>
 
@@ -187,7 +154,7 @@
                             <p><%=Edescricao%></p>
                             <div class="product-count">
                                 <a href="#" class="round-black-btn">Comprar</a>
-                                <a href="Listar Cursos.jsp" class="round-black-btn">Voltar</a>
+                                <a href="javascript:history.back()" class="round-black-btn">Voltar</a>
                             </div>
                         </div>
                     </div>

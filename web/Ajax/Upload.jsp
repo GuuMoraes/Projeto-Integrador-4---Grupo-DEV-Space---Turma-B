@@ -12,7 +12,8 @@
     String imagem = null;
 
     String idCurso = null;
-    String principal = "";
+    String principal = "0";
+    int linhas = 0;
 
     Upload up = new Upload();
     up.setFolderUpload("Imagens");
@@ -27,8 +28,17 @@
             while (rs.next()) {
                 idCurso = rs.getString(1);
             }
-            st.executeUpdate("insert into imagens (caminho, curso_codCurso) "
-                    + "VALUES('" + imagem + "', '" + idCurso + "')");
+            rs = st.executeQuery("SELECT * FROM imagens where curso_codCurso = '" + idCurso + "'");
+            while (rs.next()) {
+                linhas = rs.getRow();
+            }
+            if (linhas == 0) {
+                st.executeUpdate("insert into imagens (caminho, curso_codCurso, principal) "
+                        + "VALUES('" + imagem + "', '" + idCurso + "', '" + 1 + "')");
+            } else {
+                st.executeUpdate("insert into imagens (caminho, curso_codCurso, principal) "
+                        + "VALUES('" + imagem + "', '" + idCurso + "', '" + principal + "')");
+            }
 
         } catch (Exception e) {
 

@@ -312,8 +312,22 @@
                 <div style="display: flex; flex-direction: row; justify-content: center; align-items: center">
                     <form id="formImagem" class="form-horizontal" style="width: 1000px;" enctype="multipart/form-data" method="post">
                         <fieldset>
+                            <%
+                                String tituloImg = "Cadastro de Imagens";
+                                String btnImg = "";
+                                String btn2Img = "";
+                                if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editarImagens")) {
+                                    tituloImg = "Editar Imagens";
+                                    btnImg = "";
+                                    btn2Img = "";
+                                } else {
+
+                                }
+
+
+                            %> 
                             <div class="panel panel-primary">
-                                <div class="panel-heading">Cadastro de Imagens</div>
+                                <div class="panel-heading"><%= tituloImg%></div>
                                 <div class="panel-body">
                                     <div class="form-group">
                                         <div class="col-md-11 control-label">
@@ -325,38 +339,59 @@
                                         <div class="col-md-6">
                                             <div class="input-group">
                                                 <input required="" type="file" class="form-control" id="inputGroupFile02" id="imagem" name="imagem[]" onchange="uploadImagem();">
-                                                <button class="btn btn-secondary" name="upload" id="inputGroupFileAddon04" type="submit"  style="position: absolute">Upload</button>
+                                                <button onClick="history.go(0);" class="btn btn-secondary" name="upload" id="inputGroupFileAddon04" type="submit"  style="position: absolute">Upload</button>
 
                                             </div>
-
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" >
+                                                <input class="form-check-input" type="checkbox" value="1" name="pricinpal" id="flexCheckDefault" >
                                                 <label class="form-check-label" for="flexCheckDefault">
                                                     Imagem da Página Principal
                                                 </label>
                                             </div>
-                                            <img id="target" width="150" height="150">
+                                            <%
+                                                String idCurso = null;
+                                                String idImg = request.getParameter("id");
+                                                try {
+                                                    st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                                                    rs = st.executeQuery("SELECT * FROM curso order by codCurso desc limit 1");
+
+                                                    while (rs.next()) {
+                                                        idCurso = rs.getString(1);
+                                                    }
+
+                                                } catch (Exception e) {
+                                                }
+                                                if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editarImagens")) {
+
+                                                    rs = st.executeQuery("SELECT * FROM imagens where curso_codCurso = '" + idImg + "'");
+                                                    while (rs.next()) {%>
+                                            <div class="col-md-4">
+                                                <a href="Listar%20Cursos.jsp?funcao=excluirImagem&id=<%= rs.getString(1)%>&id2=<%= idImg%>"  class="btn btn-danger btn-xs center-block"><span class="glyphicon glyphicon-remove"></span> Deletar</a>
+                                                <img src="Imagens/<%= rs.getString(3)%>"  width="150" height="150">
+                                            </div>                                                              <%}
+                                            } else {
+                                                rs = st.executeQuery("SELECT * FROM imagens where curso_codCurso = '" + idCurso + "'");
+                                                while (rs.next()) {%>
+                                            <div class="col-md-4">
+                                                <a href="Listar%20Cursos.jsp?funcao=excluirImagem2&id=<%= rs.getString(1)%>"  class="btn btn-danger btn-xs center-block"><span class="glyphicon glyphicon-remove"></span> Deletar</a>
+                                                <img src="Imagens/<%= rs.getString(3)%>"  width="150" height="150">
+                                            </div> 
+                                            <%}
+                                                }
+                                            %>       
                                         </div>
                                     </div>  
-                                    <%  String idCurso = null;
-
-                                        try {
-                                            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                                            rs = st.executeQuery("SELECT * FROM curso order by codCurso desc limit 1");
-
-                                            while (rs.next()) {
-                                                idCurso = rs.getString(1);
-                                            }
-
-                                        } catch (Exception e) {
-                                        }
-
-                                    %>
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Cadastrar"></label>
                                         <div class="col-md-10">
-                                            <a href="Listar%20Cursos.jsp" id="Cadastrar" name="CadastrarImagens" class="btn btn-success" type="button" style="background-color: #198754; border-color: #198754;">Cadastrar</a>
-                                            <a id="Cancelar" name="Cancelar" class="btn btn-danger" href="Listar%20Cursos.jsp?funcao=excluir&id=<%=idCurso%>">Cancelar</a>
+                                            <a href="Listar%20Cursos.jsp" id="Cadastrar" name="CadastrarImagens" class="btn btn-success" type="button" style="background-color: #198754; border-color: #198754;"><%= tituloImg%></a>
+                                            <%
+                                                if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editarImagens")) {%>
+                                            <a  id = "Cancelar" name = "Cancelar" class="btn btn-danger" href ="Listar%20Cursos.jsp">Cancelar</a>
+                                            <%} else {%>
+                                            <a  id = "Cancelar" name = "Cancelar" class="btn btn-danger" href ="Listar%20Cursos.jsp?funcao=excluir&id=<%=idCurso%>">Cancelar</a>
+                                            <%}
+                                            %>
                                         </div>
                                     </div>
                                 </div>
@@ -387,6 +422,12 @@
 
 %>
 <%    if (request.getParameter(
+            "funcao") != null && request.getParameter("funcao").equals("editarImagens")) {
+        out.print("<script>$('#ModalImagens').modal({backdrop: 'static', keyboard: false});</script>");
+    }
+
+%>
+<%    if (request.getParameter(
             "funcao") != null && request.getParameter("funcao").equals("on-off")) {
         out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
     }
@@ -410,7 +451,40 @@
     }
 
 %>
+<%    if (request.getParameter(
+            "funcao") != null && request.getParameter("funcao").equals("excluirImagem")) {
+        String id = request.getParameter("id");
+        String id2 = request.getParameter("id2");
 
+        try {
+            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE from imagens where codImagens = '" + id + "'");
+
+%>
+<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=editarImagens&id=<%= id2%>'"/>
+<%        } catch (Exception e) {
+            out.print(e);
+        }
+    }
+
+%>
+<%    if (request.getParameter(
+            "funcao") != null && request.getParameter("funcao").equals("excluirImagem2")) {
+        String id = request.getParameter("id");
+        String id2 = request.getParameter("id2");
+
+        try {
+            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE from imagens where codImagens = '" + id + "'");
+
+%>
+<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=imagens'"/>
+<%        } catch (Exception e) {
+            out.print(e);
+        }
+    }
+
+%>
 <%      if (request.getParameter(
             "Cadastrar") != null) {
 
@@ -474,7 +548,7 @@
             st.executeUpdate("UPDATE curso SET nome = '" + nome + "', descricao = '" + descricao + "', qtdEstrelas = '" + estrelas + "', estado = '" + status + "', qtdVagas = '" + vagas + "', valor = '" + preco + "' where codCurso = '" + id + "'");
             out.print("<script>$('#Modal').modal('hide');</script>");
 %>
-<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=imagens2'"/>
+<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=editarImagens&id=<%= id%>'"/>
 <%
         } catch (Exception e) {
             out.print(e);
@@ -494,9 +568,6 @@
 
             st.executeUpdate("UPDATE curso SET estado = '" + status + "' where codCurso = '" + id + "'");
             out.print("<script>$('#Modal').modal('hide');</script>");
-%>
-<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=imagens2'"/>
-<%
         } catch (Exception e) {
             out.print(e);
         }
@@ -509,31 +580,31 @@
 
 <script type="text/javascript">
 
-    function uploadImagem() {
+                                                    function uploadImagem() {
 
-        var target = document.getElementById('target');
-        var file = document.querySelector("input[type=file]").files[0];
-        var reader = new FileReader();
+                                                        var target = document.getElementById('target');
+                                                        var file = document.querySelector("input[type=file]").files[0];
+                                                        var reader = new FileReader();
 
-        reader.onloadend = function () {
-            target.src = reader.result;
-        };
+                                                        reader.onloadend = function () {
+                                                            target.src = reader.result;
+                                                        };
 
-        if (file) {
-            reader.readAsDataURL(file);
-            $.ajax({
-                url: "Ajax/Upload.jsp",
-                method: "post",
-                data: {uploadImagem: target.src},
-            }).done(function (response) {
+                                                        if (file) {
+                                                            reader.readAsDataURL(file);
+                                                            $.ajax({
+                                                                url: "Ajax/Upload.jsp",
+                                                                method: "post",
+                                                                data: {uploadImagem: target.src},
+                                                            }).done(function (response) {
 
-            }).fail(function (xhr) {
+                                                            }).fail(function (xhr) {
 
-            });
-        } else {
+                                                            });
+                                                        } else {
 
-        }
-    }
+                                                        }
+                                                    }
 
 </script>
 

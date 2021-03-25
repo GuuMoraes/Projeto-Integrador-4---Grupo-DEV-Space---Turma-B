@@ -49,7 +49,7 @@ public class Upload {
         Map<String, String> itemForm;
 
         File file;
-        int maxFileSize = 5000 * 1024;
+        int maxFileSize = 300 * 400;
         int maxMemSize = 5000 * 1024;
         String filePath = sc.getRealPath("//" + this.folderUpload);
         boolean ret;

@@ -458,17 +458,14 @@
                         String imagem = "";
                         try {
                             st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                            rs = st.executeQuery("SELECT * FROM imagens");
-                            while (rs.next()) {
-                            }
-                            rs = st.executeQuery("SELECT * FROM curso");
+                            rs = st.executeQuery("SELECT * FROM curso, imagens where codCurso = curso_codCurso and imagens.principal = 1 and estado = 'Ativo'");
 
                             while (rs.next()) {%>
                     <div class="display-flex">
                         <div class="col-md-4" style="margin-bottom: 10px; text-align: center">
                             <figure class="card card-product-grid">
                                 <div class="img-wrap" style="width: 240px; height: 240px"> 
-                                    <img src="http://bootstrap-ecommerce.com/bootstrap-ecommerce-html/images/items/7.jpg" class="img-fluid">
+                                    <img src="Imagens/<%= rs.getString(10)%>" class="img-fluid">
                                 </div> 
                                 <figcaption class="info-wrap">
                                     <div class="">
