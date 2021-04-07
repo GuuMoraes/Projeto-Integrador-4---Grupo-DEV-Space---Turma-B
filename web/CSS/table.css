@@ -17,6 +17,10 @@
     color: #fff;
 }
 
+td {
+    text-align: center;
+    vertical-align: middle;
+}
 
 
 

@@ -1,12 +1,11 @@
 <%-- 
-    Document   : Listar Cursos
-    Created on : 2 de mar de 2021, 21:00:47
+    Document   : Listar Usuarios
+    Created on : 03/04/2021, 15:45:58
     Author     : Gustavo Moraes
 --%>
 
-
-<%@page import="br.senac.sp.utils.Upload"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="br.senac.sp.utils.Upload"%>
 <%@page import="br.senac.sp.bd.ConexaoDB"%>
 <%@page import="java.sql.*"%>
 <%@page import="com.mysql.jdbc.Driver"%>
@@ -23,9 +22,8 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link href="CSS/navBar.css" rel="stylesheet">
         <link href="CSS/table.css" rel="stylesheet">
-        <link href="CSS/Cadastro.css" rel="stylesheet">  
-
-        <title>Lista de Cursos</title>
+        <link href="CSS/Cadastro.css" rel="stylesheet"> 
+        <title>Listar Usuarios</title>   
     </head>
     <body>
 
@@ -77,19 +75,19 @@
         </nav>
         <div id="pesquisa" class="container-fluid" style="position: absolute; width: 400px; margin-left: 160px; margin-bottom: -55px">
             <form class="d-flex" method="post">
-                <input class="form-control me-2" type="search" placeholder="Buscar por Nome do Curso" aria-label="Search" name="txtBuscar">
+                <input class="form-control me-2" type="search" placeholder="Buscar por Nome do Usuário" aria-label="Search" name="txtBuscar">
                 <button type="submit" class="btn btn-outline-success" name="btnBuscar" id="add" >Buscar</button>
             </form>
         </div>
-
-        <table class="table"   style="position: relative; margin-left: auto; margin-right: auto;margin-top: 70px; text-align: center" method="post">
-            <a href="Listar Cursos.jsp?funcao=novo" type="button" class="btn btn-outline-success" id="add"  style="position: absolute; margin-left: 997px" ><b>+</b> Adicionar Novo Curso</a>
+        <table class="table "   style="position: relative; margin-left: auto; margin-right: auto;margin-top: 70px; text-align: center; vertical-align: middle" method="post">
+            <a href="Listar Usuarios.jsp?funcao=novo" type="button" class="btn btn-outline-success" id="add"  style="position: absolute; margin-left: 990px" ><b>+</b> Cadastrar Novo Usuário</a>
             <thead>
                 <tr>
                     <th scope="col" class="text-center">#ID</th>
-                    <th scope="col" class="text-center">Nome do Curso</th>
-                    <th scope="col" class="text-center">Quantidade de Vagas</th>
-                    <th scope="col" class="text-center">Status</th>
+                    <th scope="col" class="text-center">Foto</th>
+                    <th scope="col" class="text-center">Nome do Usuário</th>
+                    <th scope="col" class="text-center">Tipo</th>
+                    <th scope="col" class="text-center">Status</th>              
                     <th></th>
                     <th scope="col" class="text-center">Ação<th>
 
@@ -101,23 +99,24 @@
                         st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                         if (request.getParameter("btnBuscar") != null) {
                             String busca = '%' + request.getParameter("txtBuscar") + '%';
-                            rs = st.executeQuery("SELECT * FROM curso where nome LIKE '" + busca + "'");
+                            rs = st.executeQuery("SELECT * FROM usuario where nome LIKE '" + busca + "'");
                         } else {
-                            rs = st.executeQuery("SELECT * FROM curso");
+                            rs = st.executeQuery("SELECT * FROM usuario limit 10");
                         }
 
                         while (rs.next()) {%>
-                <tr>
-                    <td><%= rs.getInt(1)%></td>
-                    <td><%= rs.getString(2)%></td>
-                    <td><%= rs.getInt(6)%></td>
-                    <td><%= rs.getString(5)%></td>
+                <tr style="vertical-align: middle">
+                    <td style="vertical-align: middle"><%= rs.getInt(1)%></td>
+                    <td><img src="fotos/<%= rs.getString(7)%>"  width="50" height="50"></td>
+                    <td style="vertical-align: middle"><%= rs.getString(2)%></td>
+                    <td style="vertical-align: middle"><%= rs.getString(6)%></td>
+                    <td style="vertical-align: middle"><%= rs.getString(5)%></td>
                     <td></td>
-                    <td class="text-center">
-                        <a href="Listar%20Cursos.jsp?funcao=editar&id=<%= rs.getString(1)%>" class='btn btn-info btn-xs'><span class="glyphicon glyphicon-edit"></span> Editar</a> 
-                        <a  class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Deletar</a>
+                    <td style="vertical-align: middle" class="text-center">
+                        <a href="Listar Usuarios.jsp?funcao=editar&id=<%= rs.getString(1)%>" class='btn btn-info btn-xs'><span class="glyphicon glyphicon-edit"></span> Editar</a> 
+                        <a class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Deletar</a>
                         <a href="Visualizar Curso.jsp?id=<%= rs.getString(1)%>" id="bntVer" class="btn btn-success btn-xs" style="background-color: #198754"><span class="glyphicon glyphicon-eye-open" ></span> Ver</a> 
-                        <a href="Listar%20Cursos.jsp?funcao=on-off&id=<%= rs.getString(1)%>" class='btn btn-light btn-xs'><span class="glyphicon glyphicon-retweet"></span> On/Off</a> 
+                        <a href="Listar Usuarios.jsp?funcao=on-off&id=<%= rs.getString(1)%>" class='btn btn-light btn-xs'><span class="glyphicon glyphicon-retweet"></span> On/Off</a> 
                     </td>
                 </tr>
                 <% }
@@ -129,88 +128,86 @@
                 %>
             </tbody>          
         </table>
-        <div id="bntFinal" class="container-fluid" style="display: flex; flex-direction: row; justify-content: center; align-items: center">
-            <button type="button" class="btn btn-success" style="background-color: #198754; border-color: #198754;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-square" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"></path>
-                </svg>
-            </button>
-            <button type="button" class="btn btn-success" style="background-color: #198754; border-color: #198754; margin: 1%">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
-                <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1z"></path>
-                </svg>
-                Anterior
-            </button>
-            <button type="button" class="btn btn-success" style="background-color: #198754; border-color: #198754; margin: 1%">
-                Próximo
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16">
-                <path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1z"></path>
-                </svg>     
-            </button>
-            <button type="button" class="btn btn-success" style="background-color: #198754; border-color: #198754;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-square" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"></path>
-                </svg>
-            </button>
-        </div>
-    </body>
+    </div>
+    <div id="bntFinal" class="container-fluid" style="display: flex; flex-direction: row; justify-content: center; align-items: center">
+        <button type="button" class="btn btn-success" style="background-color: #198754; border-color: #198754;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-square" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"></path>
+            </svg>
+        </button>
+        <button type="button" class="btn btn-success" style="background-color: #198754; border-color: #198754; margin: 1%">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
+            <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1z"></path>
+            </svg>
+            Anterior
+        </button>
+        <button type="button" class="btn btn-success" style="background-color: #198754; border-color: #198754; margin: 1%">
+            Próximo
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16">
+            <path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1z"></path>
+            </svg>     
+        </button>
+        <button type="button" class="btn btn-success" style="background-color: #198754; border-color: #198754;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-square" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"></path>
+            </svg>
+        </button>
+    </div>
+</body>
 </html>
 
-<!-- Modal -->
 <div class="modal" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" >
         <div class="modal-content">
             <div class="modal-body">
                 <div style="display: flex; flex-direction: row; justify-content: center; align-items: center">
-                    <form class="form-horizontal" style="width: 1000px;" method="post">
+                    <form id="form" class="form-horizontal" style="width: 1000px;" method="post">
                         <fieldset>
                             <%  String titulo = "";
-                                String titulo2 = "";
                                 String btn = "";
                                 String Eid = "";
                                 String Enome = "";
-                                String Edescricao = "";
-                                String Eestrelas = "";
+                                String Email = "";
+                                String Esenha = "";
                                 String Estatus = "";
-                                String Evagas = "";
-                                String Epreco = "";
+                                String Etipo = "";
+                                String Eimg = "";
                                 String off = "";
+                                String cami = "";
                                 if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editar") || request.getParameter("funcao") != null && request.getParameter("funcao").equals("on-off")) {
-                                    titulo = "Editar";
-                                    titulo2 = "Editar Curso - seguir Imagens";
+                                    titulo = "Editar Usuário";
                                     btn = "Editar";
                                     Eid = request.getParameter("id");
 
                                     try {
                                         st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                                        rs = st.executeQuery("SELECT * FROM curso where codCurso = '" + Eid + "' ");
+                                        rs = st.executeQuery("SELECT * FROM usuario where codusuario = '" + Eid + "' ");
                                         while (rs.next()) {
                                             Enome = rs.getString(2);
-                                            Edescricao = rs.getString(3);
-                                            Eestrelas = rs.getString(4);
+                                            Email = rs.getString(3);
+                                            Esenha = rs.getString(4);
                                             Estatus = rs.getString(5);
-                                            Evagas = rs.getString(6);
-                                            Epreco = rs.getString(7);
+                                            Etipo = rs.getString(6);
+                                            Eimg = rs.getString(7);
                                         }
                                     } catch (Exception e) {
                                         out.print(e);
                                     }
                                     if (request.getParameter("funcao").equals("on-off")) {
                                         if (Estatus.equals("Ativo")) {
-                                            titulo = "Inativar";
-                                            titulo2 = "Inativar Curso";
+                                            titulo = "Inativar Usuário";
                                         } else {
-                                            titulo = "Ativar";
-                                            titulo2 = "Ativar Curso";
+                                            titulo = "Ativar Usuário";
                                         }
 
                                         off = "disabled=\" \"";
                                         btn = "Ativar/Inativar";
                                     }
+                                    off = "disabled=\" \"";
+                                    cami = "src=\"fotos/" + Eimg + "\" ";
 
                                 } else {
-                                    titulo = "Cadastrar";
-                                    titulo2 = "Cadastrar Curso - seguir Imagens";
+                                    titulo = "Cadastrar Usuário";
                                     btn = "Cadastrar";
 
                                 }
@@ -218,39 +215,38 @@
 
                             %>
                             <div class="panel panel-primary">
-                                <div class="panel-heading"><%=titulo%> Curso</div>
+                                <div class="panel-heading"><%=titulo%></div>
                                 <div class="panel-body">
                                     <div class="form-group">
                                         <div class="col-md-11 control-label">
                                             <p class="help-block"><h11>*</h11> Campo Obrigatório </p>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label" for="Nome">Nome do Curso <h11>*</h11></label>  
-                                        <div class="col-md-8">
-                                            <input <%=off%> value="<%=Enome%>" id="Nome" name="txtNome" placeholder="Nome do Curso" class="form-control input-md" required="" type="text" minlength="3" maxlength="280">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label" for="Descricao">Descrição <h11>*</h11></label>  
-                                        <div class="col-md-8">
-                                            <textarea <%=off%> name="txtdescricao" placeholder="Descrição do Curso" class="form-control input-md" required="" type="text" id="comment" rows="3" minlength="0" maxlength="2000"><%=Edescricao%></textarea>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label" for="Estrelas">Estrelas<h11>*</h11></label>
-                                        <div class="col-md-2">
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-half" viewBox="0 0 16 16">
-                                                    <path d="M5.354 5.119L7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.55.55 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.519.519 0 0 1-.146.05c-.341.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.171-.403.59.59 0 0 1 .084-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027c.08 0 .16.018.232.056l3.686 1.894-.694-3.957a.564.564 0 0 1 .163-.505l2.906-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.002 2.223 8 2.226v9.8z"/>
-                                                    </svg></span>
-                                                <input <%=off%> value="<%=Eestrelas%>" id="estrelas" name="txtestrelas" class="form-control" placeholder="" required="" type="number" min="0" max="5">
+                                    <div class="form-group mb-11 xl">
+                                        <label class="col-md-2 control-label" for="img">Adicionar Foto</label>
+                                        <div class="col-md-6">
+                                            <div class="col-md-6 mb-2" style="margin-left: 215px">
+                                                <img <%= cami%> id="target" width="130" height="130">
                                             </div>
+                                            <div class="input-group col-md-6">
+                                                <input  type="file" class="form-control" id="inputGroupFile02" id="imagem" name="imagem[]" onchange="uploadImagem();">
+                                            </div>          
                                         </div>
+                                    </div>  
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="Nome">Nome do Usuário <h11>*</h11></label>  
+                                        <div class="col-md-8">
+                                            <input <%=off%> value="<%=Enome%>" id="Nome" name="txtNome" placeholder="Nome do Usuário" class="form-control input-md" required="" type="text" minlength="5" maxlength="280">
+                                        </div>
+
                                     </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="Email">E-mail <h11>*</h11></label>  
+                                        <div class="col-md-8">
+                                            <input <%=off%> value="<%=Email%>" id="Email" name="txtEmail" placeholder="E-mail" class="form-control input-md" required="" type="text" minlength="5" maxlength="300"  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                                        </div>
+                                    </div> 
 
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Status">Status <h11>*</h11></label>
@@ -277,121 +273,46 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-md-2 control-label" for="QntVagas">Quant. de Vagas <h11>*</h11></label>
+                                        <label class="col-md-2 control-label" for="tipo">Tipo <h11>*</h11></label>
                                         <div class="col-md-2">
-                                            <input <%=off%> value="<%=Evagas%>" id="QntVagas" name="txtQntVagas" placeholder="Qnt de Vagas" class="form-control input-md" required="" type="number" min="1">
-                                        </div>
-                                    </div>
+                                            <select  required="" class="form-select form-select-lg mb-3" aria-label="Selecione" name="txtTipo">
+                                                <option  value="<%=Etipo%>"><%=Etipo%></option>
+                                                <%
 
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label" for="Preço">Preço <h11>*</h11></label>
-                                        <div class="col-md-2">
-                                            <input <%=off%> value="<%=Epreco%>" id="Preço" name="txtpreco" placeholder="Ex.: 000.00" class="form-control input-md" required="" type="text" pattern="^\d+(\.)\d{2}$">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label" for="Cadastrar"></label>
-                                        <div class="col-md-10">
-                                            <button id="Cadastrar" name="<%=btn%>" class="btn btn-success" type="Submit" style="background-color: #198754; border-color: #198754;"><%=titulo2%> </button>
-                                            <a id="Cancelar" name="Cancelar" class="btn btn-danger" href="Listar%20Cursos.jsp">Cancelar</a>
-                                        </div>
-                                    </div>
-                                </div>
-                        </fieldset>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal" id="ModalImagens" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" >
-        <div class="modal-content">
-            <div class="modal-body">
-                <div style="display: flex; flex-direction: row; justify-content: center; align-items: center">
-                    <form id="formImagem" class="form-horizontal" style="width: 1000px;" enctype="multipart/form-data" method="post">
-                        <fieldset>
-                            <%
-                                String tituloImg = "Cadastro de Imagens";
-                                String btnImg = "";
-                                String btn2Img = "";
-                                if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editarImagens")) {
-                                    tituloImg = "Editar Imagens";
-                                    btnImg = "";
-                                    btn2Img = "";
-                                } else {
-
-                                }
-
-
-                            %> 
-                            <div class="panel panel-primary">
-                                <div class="panel-heading"><%= tituloImg%></div>
-                                <div class="panel-body">
-                                    <div class="form-group">
-                                        <div class="col-md-11 control-label">
-                                            <p class="help-block"><h11>*</h11> Campo Obrigatório </p>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-11 xl">
-                                        <label class="col-md-2 control-label" for="img">Adicionar Imagem<h11>*</h11></label>
-                                        <div class="col-md-6">
-                                            <div class="input-group">
-                                                <input required="" type="file" class="form-control" id="inputGroupFile02" id="imagem" name="imagem[]" onchange="uploadImagem();">
-                                                <button onClick="history.go(0);" class="btn btn-secondary" name="upload" id="inputGroupFileAddon04" type="submit"  style="position: absolute">Upload</button>
-
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="1" name="pricinpal" id="flexCheckDefault" >
-                                                <label class="form-check-label" for="flexCheckDefault">
-                                                    Imagem da Página Principal
-                                                </label>
-                                            </div>
-                                            <%
-                                                String idCurso = null;
-                                                String idImg = request.getParameter("id");
-                                                try {
-                                                    st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                                                    rs = st.executeQuery("SELECT * FROM curso order by codCurso desc limit 1");
-
-                                                    while (rs.next()) {
-                                                        idCurso = rs.getString(1);
+                                                    if (!Estatus.equals(
+                                                            "Administrador")) {
+                                                        out.print(" <option>Administrador</option>");
                                                     }
 
-                                                } catch (Exception e) {
-                                                }
-                                                if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editarImagens")) {
+                                                    if (!Estatus.equals(
+                                                            "Suporte")) {
+                                                        out.print(" <option>Suporte</option>");
+                                                    }
 
-                                                    rs = st.executeQuery("SELECT * FROM imagens where curso_codCurso = '" + idImg + "'");
-                                                    while (rs.next()) {%>
-                                            <div class="col-md-4">
-                                                <a href="Listar%20Cursos.jsp?funcao=excluirImagem&id=<%= rs.getString(1)%>&id2=<%= idImg%>"  class="btn btn-danger btn-xs center-block"><span class="glyphicon glyphicon-remove"></span> Deletar</a>
-                                                <img src="Imagens/<%= rs.getString(3)%>"  width="150" height="150">
-                                            </div>                                                              <%}
-                                            } else {
-                                                rs = st.executeQuery("SELECT * FROM imagens where curso_codCurso = '" + idCurso + "'");
-                                                while (rs.next()) {%>
-                                            <div class="col-md-4">
-                                                <a href="Listar%20Cursos.jsp?funcao=excluirImagem2&id=<%= rs.getString(1)%>"  class="btn btn-danger btn-xs center-block"><span class="glyphicon glyphicon-remove"></span> Deletar</a>
-                                                <img src="Imagens/<%= rs.getString(3)%>"  width="150" height="150">
-                                            </div> 
-                                            <%}
-                                                }
-                                            %>       
+
+                                                %>
+
+                                            </select>
                                         </div>
-                                    </div>  
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="Senha">Senha <h11>*</h11></label>  
+                                        <div class="col-md-3">
+                                            <input <%=off%> value="<%=Esenha%>" id="senha" name="txtSenha" placeholder="***************" class="form-control input-md" required="" type="password" minlength="3" maxlength="16">
+                                        </div>
+
+                                        <label class="col-md-2 control-label" for="Senha">Confirme a Senha <h11>*</h11></label>  
+                                        <div class="col-md-3">
+                                            <input <%=off%> value="<%=Esenha%>" id="senha2" name="txtSenha2" placeholder="***************" class="form-control input-md" required="" type="password" minlength="3" maxlength="16" onblur=validarSenha()>
+                                        </div>
+                                    </div> 
+                                    <br>
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Cadastrar"></label>
                                         <div class="col-md-10">
-                                            <a href="Listar%20Cursos.jsp" id="Cadastrar" name="CadastrarImagens" class="btn btn-success" type="button" style="background-color: #198754; border-color: #198754;"><%= tituloImg%></a>
-                                            <%
-                                                if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editarImagens")) {%>
-                                            <a  id = "Cancelar" name = "Cancelar" class="btn btn-danger" href ="Listar%20Cursos.jsp">Cancelar</a>
-                                            <%} else {%>
-                                            <a  id = "Cancelar" name = "Cancelar" class="btn btn-danger" href ="Listar%20Cursos.jsp?funcao=excluir&id=<%=idCurso%>">Cancelar</a>
-                                            <%}
-                                            %>
+                                            <button  id="Cadastrar" name="<%=btn%>" class="btn btn-success" type="submit" style="background-color: #198754; border-color: #198754;"><%=titulo%> </button>
+                                            <a id="Cancelar" name="Cancelar" class="btn btn-danger" href="Listar Usuarios.jsp">Cancelar</a>
                                         </div>
                                     </div>
                                 </div>
@@ -409,224 +330,69 @@
     }
 
     if (request.getParameter(
-            "funcao") != null && request.getParameter("funcao").equals("imagens")) {
-        out.print("<script>$('#ModalImagens').modal({backdrop: 'static', keyboard: false});</script>");
-    }
-
-    if (request.getParameter(
             "funcao") != null && request.getParameter("funcao").equals("editar")) {
         out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
     }
 
-    if (request.getParameter(
-            "funcao") != null && request.getParameter("funcao").equals("editarImagens")) {
-        out.print("<script>$('#ModalImagens').modal({backdrop: 'static', keyboard: false});</script>");
-    }
-
-    if (request.getParameter(
-            "funcao") != null && request.getParameter("funcao").equals("on-off")) {
-        out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
-    }
-
 %>
 
-<%    if (request.getParameter(
-            "funcao") != null && request.getParameter("funcao").equals("excluir")) {
-        String id = request.getParameter("id");
+<script>
+    function validarSenha() {
+        NovaSenha = document.getElementById('senha').value;
+        CNovaSenha = document.getElementById('senha2').value;
+        if (NovaSenha != CNovaSenha) {
+            alert("Senhas Diferentes!\npor favor digite novamente");
+            return off = "disabled=\" \"";
+        } else {
 
-        try {
-            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            st.executeUpdate("DELETE from imagens where curso_codCurso = '" + id + "'");
-            st.executeUpdate("DELETE from curso where codCurso = '" + id + "'");
-
-%>
-<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp'"/>
-<%        } catch (Exception e) {
-            out.print(e);
         }
     }
-
-%>
-<%    if (request.getParameter(
-            "funcao") != null && request.getParameter("funcao").equals("excluirImagem")) {
-        String id = request.getParameter("id");
-        String id2 = request.getParameter("id2");
-
-        try {
-            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            st.executeUpdate("DELETE from imagens where codImagens = '" + id + "' and principal = 0");
-
-%>
-<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=editarImagens&id=<%= id2%>'"/>
-<%        } catch (Exception e) {
-            out.print(e);
-        }
-    }
-
-%>
-<%    if (request.getParameter(
-            "funcao") != null && request.getParameter("funcao").equals("excluirImagem2")) {
-        String id = request.getParameter("id");
-        String id2 = request.getParameter("id2");
-
-        try {
-            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            st.executeUpdate("DELETE from imagens where codImagens = '" + id + "'");
-
-%>
-<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=imagens'"/>
-<%        } catch (Exception e) {
-            out.print(e);
-        }
-    }
-
-%>
-<%      if (request.getParameter(
-            "Cadastrar") != null) {
-
-        String nome = request.getParameter("txtNome");
-        String descricao = request.getParameter("txtdescricao");
-        String estrelas = request.getParameter("txtestrelas");
-        String status = request.getParameter("txtstatus");
-        String vagas = request.getParameter("txtQntVagas");
-        double preco = Double.parseDouble(request.getParameter("txtpreco"));
-
-        try {
-
-            st.executeUpdate("insert into curso (nome, descricao, qtdEstrelas, estado, qtdVagas, valor) "
-                    + "VALUES('" + nome + "', '" + descricao + "', '" + estrelas + "', '" + status + "', '" + vagas + "', '" + preco + "')");
-            out.print("<script>$('#Modal').modal('hide');</script>");
-%>
-<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=imagens'"/>
-<%
-        } catch (Exception e) {
-            out.print(e);
-        }
-
-    }
-
-%>
-
-<%  if (request.getParameter(
-            "CadastrarImagens") != null) {
-        String nome = "nome";
-        idCurso = null;
-
-        try {
-            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery("SELECT * FROM curso order by codCurso desc limit 1");
-            while (rs.next()) {
-                idCurso = rs.getString(1);
-            }
-            st.executeUpdate("insert into imagens (caminho, curso_codCurso) "
-                    + "VALUES('" + nome + "', '" + idCurso + "')");
-%>
-<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp'"/>
-<%
-        } catch (Exception e) {
-        }
-    }
-%>
-
-<%      if (request.getParameter(
-            "Editar") != null) {
-
-        String nome = request.getParameter("txtNome");
-        String descricao = request.getParameter("txtdescricao");
-        String estrelas = request.getParameter("txtestrelas");
-        String status = request.getParameter("txtstatus");
-        String vagas = request.getParameter("txtQntVagas");
-        double preco = Double.parseDouble(request.getParameter("txtpreco"));
-        String id = request.getParameter("id");
-
-        try {
-
-            st.executeUpdate("UPDATE curso SET nome = '" + nome + "', descricao = '" + descricao + "', qtdEstrelas = '" + estrelas + "', estado = '" + status + "', qtdVagas = '" + vagas + "', valor = '" + preco + "' where codCurso = '" + id + "'");
-            out.print("<script>$('#Modal').modal('hide');</script>");
-%>
-<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar%20Cursos.jsp?funcao=editarImagens&id=<%= id%>'"/>
-<%
-        } catch (Exception e) {
-            out.print(e);
-        }
-
-    }
-
-%>
-
-<%      if (request.getParameter(
-            "Ativar/Inativar") != null) {
-
-        String status = request.getParameter("txtstatus");
-        String id = request.getParameter("id");
-
-        try {
-
-            st.executeUpdate("UPDATE curso SET estado = '" + status + "' where codCurso = '" + id + "'");
-            out.print("<script>$('#Modal').modal('hide');</script>");
-        } catch (Exception e) {
-            out.print(e);
-        }
-
-    }
-
-%>
+</script>
+}
 
 <script src="JS/jquery-3.6.0.js"></script>
 
 <script type="text/javascript">
 
-                                                    function uploadImagem() {
+    function uploadImagem() {
+        var target = document.getElementById('target');
+        var file = document.querySelector("input[type=file]").files[0];
+        var reader = new FileReader();
 
-                                                        var target = document.getElementById('target');
-                                                        var file = document.querySelector("input[type=file]").files[0];
-                                                        var reader = new FileReader();
+        reader.onloadend = function () {
+            target.src = reader.result;
+        };
 
-                                                        reader.onloadend = function () {
-                                                            target.src = reader.result;
-                                                        };
+        if (file) {
+            reader.readAsDataURL(file);
 
-                                                        if (file) {
-                                                            reader.readAsDataURL(file);
-                                                            $.ajax({
-                                                                url: "Ajax/Upload.jsp",
-                                                                method: "post",
-                                                                data: {uploadImagem: target.src},
-                                                            }).done(function (response) {
 
-                                                            }).fail(function (xhr) {
-
-                                                            });
-                                                        } else {
-
-                                                        }
-                                                    }
+        } else {
+            target.src = "";
+        }
+    }
 
 </script>
 
 <script type="text/javascript">
-    $("#formImagem").submit(function () {
-
+    $("#form").submit(function () {
         event.preventDefault();
         var formData = new FormData(this);
 
         $.ajax({
-            url: "Ajax/Upload.jsp",
+            url: "Ajax/inserirUsuario.jsp",
             type: 'POST',
             data: formData,
 
             success: function (mensagem) {
 
                 $('#mensagem').removeClass()
-
-                if (mensagem.trim() == "Salvo com Sucesso!!") {
-                    $('#mensagem').addClass('text-success');
+                if (mensagem.trim() == "Cadastrado Realizado com Sucesso!!") {
+                    alert(mensagem);
+                    window.location.href = "Listar Usuarios.jsp";
                 } else {
-
-                    $('#mensagem').addClass('text-danger')
+                    alert(mensagem);
                 }
-
-                $('#mensagem').text(mensagem)
 
             },
 
