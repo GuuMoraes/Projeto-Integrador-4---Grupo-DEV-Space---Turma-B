@@ -19,7 +19,7 @@
         <link href="CSS/navBar.css" rel="stylesheet">
         <link href="CSS/table.css" rel="stylesheet">
         <link href="CSS/Cadastro.css" rel="stylesheet">
-        
+
         <title>Gerenciar</title>
     </head>
     <body>
@@ -46,6 +46,14 @@
                             </svg>
                         </div>
                     </div>
+                    <div class="col-sm-10" style="text-align: end; margin-top: 10px" >
+                        <a type="button" class="btn btn-secondary" style="color: #000; background-color: #00A172" href="Ajax/logout.jsp">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"></path>
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"></path>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,6 +72,43 @@
                 </div>
             </div>
         </nav>
+        <div style="display: flex; flex-direction: row; justify-content: center; margin-top: 5px">
+            <%
+                String nomeUsuario = (String) session.getAttribute("nomeUsuario");
+                String tipo = (String) session.getAttribute("tipo");
+                out.print("<h3> Bem-Vindo " + nomeUsuario + " </h3>");
+
+                if (nomeUsuario == null) {%>
+            <meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Login.jsp'"/>
+            <%}
+
+
+            %>
+
+        </div>
+        <div class="col-lg-12" style="display: flex; flex-direction: row; justify-content: center; margin-top: 5px">
+
+        </div>
+        <div class="col-lg-12" style="display: flex; flex-direction: row; justify-content: center; margin-top: 5px; margin-right:  5px">
+            <div style="margin-right: 15px"><a href="Listar Cursos.jsp" style="color: black; ">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-journals" viewBox="0 0 16 16">
+                    <path d="M5 0h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2 2 2 0 0 1-2 2H3a2 2 0 0 1-2-2h1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1H1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v9a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1H3a2 2 0 0 1 2-2z"/>
+                    <path d="M1 6v-.5a.5.5 0 0 1 1 0V6h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V9h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 2.5v.5H.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1H2v-.5a.5.5 0 0 0-1 0z"/>
+                    </svg>
+                    <br>
+                    <label>Cursos</label>
+                </a>
+            </div>
+            <div style="margin-left: 15px"><a href="Listar Usuarios.jsp" style="color: black">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-person-square" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                    <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12z"/>
+                    </svg>
+                    <br>
+                    <label>Usuários</label>
+                </a>
+            </div>
+        </div>
     </body>
 </html>
 

@@ -4,6 +4,7 @@
     Author     : Gustavo Moraes
 --%>
 
+<%@page import="java.security.MessageDigest"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="br.senac.sp.utils.Upload"%>
 <%@page import="br.senac.sp.bd.ConexaoDB"%>
@@ -30,6 +31,13 @@
         <%
             Statement st = null;
             ResultSet rs = null;
+
+            String nomeUsuario = (String) session.getAttribute("nomeUsuario");
+            String tipo = (String) session.getAttribute("tipo");
+
+            if (nomeUsuario == null) {%>
+        <meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Login.jsp'"/>
+        <%}
         %> 
 
         <div id="flipkart-navbar">
@@ -54,6 +62,14 @@
                             </g>
                             </svg>
                         </div>
+                    </div>
+                    <div class="col-sm-10" style="text-align: end; margin-top: 10px" >
+                        <a type="button" class="btn btn-secondary" style="color: #000; background-color: #00A172" href="Ajax/logout.jsp">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"></path>
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"></path>
+                            </svg>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -80,7 +96,12 @@
             </form>
         </div>
         <table class="table "   style="position: relative; margin-left: auto; margin-right: auto;margin-top: 70px; text-align: center; vertical-align: middle" method="post">
+            <%
+                if (tipo.equals("Administrador")) {%>
             <a href="Listar Usuarios.jsp?funcao=novo" type="button" class="btn btn-outline-success" id="add"  style="position: absolute; margin-left: 990px" ><b>+</b> Cadastrar Novo Usuário</a>
+            <%}
+
+            %>
             <thead>
                 <tr>
                     <th scope="col" class="text-center">#ID</th>
@@ -89,13 +110,16 @@
                     <th scope="col" class="text-center">Tipo</th>
                     <th scope="col" class="text-center">Status</th>              
                     <th></th>
+                        <%                        if (tipo.equals("Administrador")) {%>
                     <th scope="col" class="text-center">Ação<th>
+                        <%}
+                        %>
+
 
                 </tr>
             </thead>
             <tbody>
-                <%
-                    try {
+                <%                    try {
                         st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                         if (request.getParameter("btnBuscar") != null) {
                             String busca = '%' + request.getParameter("txtBuscar") + '%';
@@ -112,12 +136,18 @@
                     <td style="vertical-align: middle"><%= rs.getString(6)%></td>
                     <td style="vertical-align: middle"><%= rs.getString(5)%></td>
                     <td></td>
+                    <%
+                        if (tipo.equals("Administrador")) {%>
+
                     <td style="vertical-align: middle" class="text-center">
                         <a href="Listar Usuarios.jsp?funcao=editar&id=<%= rs.getString(1)%>" class='btn btn-info btn-xs'><span class="glyphicon glyphicon-edit"></span> Editar</a> 
                         <a class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Deletar</a>
                         <a href="Visualizar Curso.jsp?id=<%= rs.getString(1)%>" id="bntVer" class="btn btn-success btn-xs" style="background-color: #198754"><span class="glyphicon glyphicon-eye-open" ></span> Ver</a> 
                         <a href="Listar Usuarios.jsp?funcao=on-off&id=<%= rs.getString(1)%>" class='btn btn-light btn-xs'><span class="glyphicon glyphicon-retweet"></span> On/Off</a> 
                     </td>
+                    <%}
+
+                    %>
                 </tr>
                 <% }
 
@@ -161,7 +191,14 @@
         <div class="modal-content">
             <div class="modal-body">
                 <div style="display: flex; flex-direction: row; justify-content: center; align-items: center">
-                    <form id="form" class="form-horizontal" style="width: 1000px;" method="post">
+                    <%                        String n = "forme";
+
+                        if (request.getParameter(
+                                "funcao") != null && request.getParameter("funcao").equals("editar") || request.getParameter("funcao") != null && request.getParameter("funcao").equals("on-off")) {
+                            n = "form";
+                        }
+                    %>
+                    <form id="<%= n%>" class="form-horizontal" style="width: 1000px;" method="post">
                         <fieldset>
                             <%  String titulo = "";
                                 String btn = "";
@@ -169,15 +206,19 @@
                                 String Enome = "";
                                 String Email = "";
                                 String Esenha = "";
-                                String Estatus = "";
-                                String Etipo = "";
+                                String Estatus = "Ativo";
+                                String Etipo = "Administrador";
                                 String Eimg = "";
                                 String off = "";
+                                String off2 = "";
                                 String cami = "";
-                                if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editar") || request.getParameter("funcao") != null && request.getParameter("funcao").equals("on-off")) {
+
+                                if (request.getParameter(
+                                        "funcao") != null && request.getParameter("funcao").equals("editar") || request.getParameter("funcao") != null && request.getParameter("funcao").equals("on-off")) {
                                     titulo = "Editar Usuário";
                                     btn = "Editar";
                                     Eid = request.getParameter("id");
+                                    off2 = "disabled=\" \"";
 
                                     try {
                                         st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -199,11 +240,12 @@
                                         } else {
                                             titulo = "Ativar Usuário";
                                         }
-
+                                        off2 = " ";
                                         off = "disabled=\" \"";
                                         btn = "Ativar/Inativar";
+
                                     }
-                                    off = "disabled=\" \"";
+
                                     cami = "src=\"fotos/" + Eimg + "\" ";
 
                                 } else {
@@ -222,6 +264,7 @@
                                             <p class="help-block"><h11>*</h11> Campo Obrigatório </p>
                                         </div>
                                     </div>
+                                    <input value="<%= Eid%>" type="hidden" id="txtid" name="txtid" >
                                     <div class="form-group mb-11 xl">
                                         <label class="col-md-2 control-label" for="img">Adicionar Foto</label>
                                         <div class="col-md-6">
@@ -229,7 +272,7 @@
                                                 <img <%= cami%> id="target" width="130" height="130">
                                             </div>
                                             <div class="input-group col-md-6">
-                                                <input  type="file" class="form-control" id="inputGroupFile02" id="imagem" name="imagem[]" onchange="uploadImagem();">
+                                                <input <%=off%> <%=off2%> type="file" class="form-control" id="inputGroupFile02" id="imagem" name="imagem[]" onchange="uploadImagem();">
                                             </div>          
                                         </div>
                                     </div>  
@@ -244,23 +287,21 @@
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Email">E-mail <h11>*</h11></label>  
                                         <div class="col-md-8">
-                                            <input <%=off%> value="<%=Email%>" id="Email" name="txtEmail" placeholder="E-mail" class="form-control input-md" required="" type="text" minlength="5" maxlength="300"  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                                            <input <%=off%>  <%= off2%> value="<%=Email%>" id="Email" name="txtEmail" placeholder="E-mail" class="form-control input-md" required="" type="text" minlength="5" maxlength="300"  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
                                         </div>
                                     </div> 
 
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Status">Status <h11>*</h11></label>
                                         <div class="col-md-2">
-                                            <select  required="" class="form-select form-select-lg mb-3" aria-label="Selecione" name="txtstatus">
+                                            <select <%= off2%>   required="" class="form-select form-select-lg mb-3" aria-label="Selecione" name="txtstatus">
                                                 <option  value="<%=Estatus%>"><%=Estatus%></option>
                                                 <%
 
                                                     if (!Estatus.equals(
                                                             "Ativo")) {
                                                         out.print(" <option>Ativo</option>");
-                                                    }
-
-                                                    if (!Estatus.equals(
+                                                    } else if (!Estatus.equals(
                                                             "Inativo")) {
                                                         out.print(" <option>Inativo</option>");
                                                     }
@@ -275,16 +316,14 @@
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="tipo">Tipo <h11>*</h11></label>
                                         <div class="col-md-2">
-                                            <select  required="" class="form-select form-select-lg mb-3" aria-label="Selecione" name="txtTipo">
+                                            <select <%=off%> required="" class="form-select form-select-lg mb-3" aria-label="Selecione" name="txtTipo">
                                                 <option  value="<%=Etipo%>"><%=Etipo%></option>
                                                 <%
 
-                                                    if (!Estatus.equals(
+                                                    if (!Etipo.equals(
                                                             "Administrador")) {
                                                         out.print(" <option>Administrador</option>");
-                                                    }
-
-                                                    if (!Estatus.equals(
+                                                    } else if (!Etipo.equals(
                                                             "Suporte")) {
                                                         out.print(" <option>Suporte</option>");
                                                     }
@@ -308,10 +347,13 @@
                                         </div>
                                     </div> 
                                     <br>
+
+
                                     <div class="form-group">
                                         <label class="col-md-2 control-label" for="Cadastrar"></label>
                                         <div class="col-md-10">
-                                            <button  id="Cadastrar" name="<%=btn%>" class="btn btn-success" type="submit" style="background-color: #198754; border-color: #198754;"><%=titulo%> </button>
+
+                                            <button  id="Cadastrar" name="<%=btn%>" class="btn btn-success" type="submit" style="background-color: #198754; border-color: #198754;"><%=titulo%> </button>   
                                             <a id="Cancelar" name="Cancelar" class="btn btn-danger" href="Listar Usuarios.jsp">Cancelar</a>
                                         </div>
                                     </div>
@@ -324,16 +366,23 @@
     </div>
 </div>
 
-<%    if (request.getParameter(
-            "funcao") != null && request.getParameter("funcao").equals("novo")) {
-        out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
-    }
+<%
+    if (tipo.equals("Administrador")) {
+        if (request.getParameter(
+                "funcao") != null && request.getParameter("funcao").equals("novo")) {
+            out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
+        }
 
-    if (request.getParameter(
-            "funcao") != null && request.getParameter("funcao").equals("editar")) {
-        out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
-    }
+        if (request.getParameter(
+                "funcao") != null && request.getParameter("funcao").equals("editar")) {
+            out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
+        }
 
+        if (request.getParameter(
+                "funcao") != null && request.getParameter("funcao").equals("on-off")) {
+            out.print("<script>$('#Modal').modal({backdrop: 'static', keyboard: false});</script>");
+        }
+    }
 %>
 
 <script>
@@ -349,6 +398,56 @@
     }
 </script>
 }
+<%      if (request.getParameter(
+            "Editar") != null) {
+
+        String nome = request.getParameter("txtNome");
+        String senha = request.getParameter("txtSenha");
+        String tipo2 = request.getParameter("txtTipo");
+        String id = request.getParameter("id");
+
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte messageDigest[] = md.digest(senha.getBytes("UTF-8"));
+
+        StringBuilder sb = new StringBuilder();
+        String senhaHex = "";
+        for (byte b : messageDigest) {
+            sb.append(String.format("%02X", 0xff & b));
+
+        }
+        senhaHex = sb.toString();
+
+        try {
+            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE usuario SET nome = '" + nome + "', senha = '" + senhaHex + "', tipo = '" + tipo2 + "'  where codusuario = '" + id + "'");
+%>
+<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar Usuarios.jsp'"/>
+<%        } catch (Exception e) {
+            out.print(e);
+        }
+
+    }
+
+%>
+<%      if (request.getParameter(
+            "Ativar/Inativar") != null) {
+
+        String status = request.getParameter("txtstatus");
+        String id = request.getParameter("id");
+
+        try {
+            st = ConexaoDB.conectar().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE usuario SET estado = '" + status + "' where codusuario = '" + id + "'");
+            out.print("<script>$('#Modal').modal('hide');</script>");
+%>
+<meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Listar Usuarios.jsp'"/>
+<%        } catch (Exception e) {
+            out.print(e);
+        }
+
+    }
+
+%>
 
 <script src="JS/jquery-3.6.0.js"></script>
 
@@ -375,7 +474,7 @@
 </script>
 
 <script type="text/javascript">
-    $("#form").submit(function () {
+    $("#forme").submit(function () {
         event.preventDefault();
         var formData = new FormData(this);
 
@@ -388,6 +487,9 @@
 
                 $('#mensagem').removeClass()
                 if (mensagem.trim() == "Cadastrado Realizado com Sucesso!!") {
+                    alert(mensagem);
+                    window.location.href = "Listar Usuarios.jsp";
+                } else if (mensagem.trim() == "Editado com Sucesso!!") {
                     alert(mensagem);
                     window.location.href = "Listar Usuarios.jsp";
                 } else {

@@ -32,6 +32,12 @@
         <%
             Statement st = null;
             ResultSet rs = null;
+
+            String nomeUsuario = (String) session.getAttribute("nomeUsuario");
+
+            if (nomeUsuario == null) {%>
+        <meta http-equiv="refresh" content="0; URL='http://localhost:8080/Projeto-PI4-DevSpace/Login.jsp'"/>
+        <%}
         %> 
 
         <div id="flipkart-navbar">
@@ -56,6 +62,14 @@
                             </g>
                             </svg>
                         </div>
+                    </div>
+                    <div class="col-sm-10" style="text-align: end; margin-top: 10px" >
+                        <a type="button" class="btn btn-secondary" style="color: #000; background-color: #00A172" href="Ajax/logout.jsp">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"></path>
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"></path>
+                            </svg>
+                        </a>
                     </div>
                 </div>
             </div>
